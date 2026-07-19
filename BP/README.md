@@ -1,7 +1,17 @@
-# ⚡ VECTOR LOCK — Add-on Family v2.0.0
+# ⚡ VECTOR LOCK — Add-on Family v2.2.0
 
 **Minecraft Bedrock Add-on** · สร้างโดย **p7x939**
 GitHub: https://github.com/plu007-fix · YouTube: https://www.youtube.com/@p7x939
+
+---
+
+## 🆕 v2.2.0 — สวิตช์ปิด API + หน้า Achievements
+
+- **ปุ่ม `API: เปิด/ปิด` ในเมนู** — กดปิดแล้ว**ทุกฟีเจอร์ของทุกแพคหยุดทำงานทันที** (โหมดวานิลลาแท้ เหมาะกับช่วงล่า Achievements) กดเปิดกลับได้ทุกเมื่อ ค่าที่ตั้งไว้ไม่หายแม้แต่ค่าเดียว
+- ฟีเจอร์ปิดตัวอย่างนุ่มนวล: กำลังบินอยู่ก็ลงพื้น คืนแรงโน้มถ่วง, โทเทมที่ถูกสลับไว้ก็คืนของเดิมกลับมือรอง
+- **🏆 Achievements Enabled จริง** — ทุกแพค (BP + RP ทั้ง 22 manifest) ประกาศ `"product_type": "addon"` ตามสเปคทางการของ Minecraft → **เปิดใช้แอดออนแล้วโลกยัง Achievements Enabled และเก็บ Achievements ได้ตามปกติ** (ใช้ Stable Script API เท่านั้น ไม่ต้องเปิด Experiments)
+- **หน้า `Achievements`** — เช็คสถานะความปลอดภัยของ Achievements ได้ในเกมทุกเมื่อ
+- หน้าเดียวกันเตือนสิ่งที่จะปิด Achievements **ถาวรของโลก**: เปิด Cheats / เปิด Experiments / สลับเป็น Creative (พร้อมเตือนสดเมื่อคุณอยู่โหมด Creative)
 
 ---
 

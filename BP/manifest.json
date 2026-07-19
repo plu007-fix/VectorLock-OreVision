@@ -6,8 +6,8 @@
         "uuid": "fc44f0f6-255a-4b49-925a-f03700c85a43",
         "version": [
             2,
-            1,
-            4
+            2,
+            0
         ],
         "min_engine_version": [
             1,
@@ -24,8 +24,8 @@
             "entry": "scripts/main.js",
             "version": [
                 2,
-                1,
-                4
+                2,
+                0
             ]
         }
     ],
@@ -42,8 +42,8 @@
             "uuid": "917d060b-6ef1-4fab-b6f8-7fc7f0de7816",
             "version": [
                 2,
-                1,
-                4
+                2,
+                0
             ]
         }
     ],
@@ -52,6 +52,7 @@
             "p7x939"
         ],
         "license": "All Rights Reserved",
-        "url": "https://github.com/plu007-fix"
+        "url": "https://github.com/plu007-fix",
+        "product_type": "addon"
     }
 }

@@ -115,6 +115,7 @@ function buildRuntime(mode) {
     const configStore = new Map();
     const waypointsCache = new Map();
     const uiOpenState = new Map();
+    const vanillaViewCache = new Map();
     const _featureDefaults = {};
     const _shared = new Map();
 
@@ -133,7 +134,7 @@ function buildRuntime(mode) {
         try { Object.assign(_featureDefaults, obj); } catch (_) { }
     }
     function defaultSettings() {
-        const base = { lang: "en", particles: true, sounds: true, maxWaypoints: 20 };
+        const base = { lang: "en", particles: true, sounds: true, maxWaypoints: 20, apiEnabled: true };
         return Object.assign(base, _featureDefaults);
     }
     function readConfig(playerId) {
@@ -141,10 +142,42 @@ function buildRuntime(mode) {
         const base = defaultSettings();
         return stored ? Object.assign(base, stored) : base;
     }
+    /* ---- master switch: apiEnabled=false → ทุกฟีเจอร์เห็น config เวอร์ชัน "วานิลลา"
+     *  (boolean ฟีเจอร์ถูกบังคับ false) — ครอบทั้ง tick และ event handler ของแพคนี้
+     *  ทุกแพคอ่านคีย์ vlk_cfg_* ชุดเดียวกัน + cfgsync → สวิตช์เดียวดับทั้งวง ---- */
+    const VANILLA_KEEP = new Set(["apiEnabled", "particles", "sounds"]);
+    function buildVanillaView(cfg) {
+        const view = Object.assign({}, cfg);
+        for (const k in view) {
+            if (typeof view[k] === "boolean" && !VANILLA_KEEP.has(k)) view[k] = false;
+        }
+        view.apiEnabled = false;
+        return view;
+    }
     function getConfig(player) {
         let cfg = configStore.get(player.id);
-        if (!cfg) { cfg = readConfig(player.id); configStore.set(player.id, cfg); }
+        if (!cfg) { cfg = readConfig(player.id); configStore.set(player.id, cfg); vanillaViewCache.delete(player.id); }
+        if (cfg.apiEnabled === false) {
+            let view = vanillaViewCache.get(player.id);
+            if (!view) { view = buildVanillaView(cfg); vanillaViewCache.set(player.id, view); }
+            return view;
+        }
         return cfg;
+    }
+    /** config จริงไม่ผ่านตัวกรองวานิลลา — สำหรับ UI สลับ API เท่านั้น */
+    function getRawConfig(player) {
+        let cfg = configStore.get(player.id);
+        if (!cfg) { cfg = readConfig(player.id); configStore.set(player.id, cfg); vanillaViewCache.delete(player.id); }
+        return cfg;
+    }
+    function setApiEnabled(player, on) {
+        try {
+            const cfg = getRawConfig(player);
+            cfg.apiEnabled = !!on;
+            vanillaViewCache.delete(player.id);
+            persistConfig(player.id);
+            return true;
+        } catch (_) { return false; }
     }
     const _cfgSyncPending = new Set();
     function persistConfig(playerId) {
@@ -219,6 +252,20 @@ function buildRuntime(mode) {
             on: "§aON", off: "§cOFF",
             soloSub: "§7Standalone mode §8— §7install §dVL Core §7to unify 2+ add-ons",
             openHint: "§7Sneak + Compass to open settings",
+            apiOffSub: "§c⚠ API is OFF — vanilla mode.\n§7Every feature is paused. Feature buttons return when you turn the API back on.",
+            m_api_on: "§a§l◆ API: ON\n§8Tap to switch to pure vanilla",
+            m_api_off: "§c§l◆ API: OFF — vanilla mode\n§8Tap to re-enable every feature",
+            apiNowOn: "§a✔ API ON §7— features are running again",
+            apiNowOff: "§c✖ API OFF §7— vanilla mode, every feature paused",
+            m_achv: "§6§l◆ Achievements\n§8Achievement-safety status",
+            achvTitle: "§6§lACHIEVEMENTS",
+            achv_pack: "§a✔ §fThis pack is flagged as an achievement-friendly\n§7   Add-On (§fproduct_type: addon§7) and uses the stable\n§7   Script API only — activating it does NOT disable\n§7   achievements. No Experiments needed.",
+            achv_api_on: "§e◆ §fVL API: §aON §7— features active (still achievement-safe)",
+            achv_api_off: "§e◆ §fVL API: §cOFF §7— pure vanilla mode",
+            achv_gm: "§e◆ §fCurrent game mode: §b{0}",
+            achv_gm_creative: "§c⚠ §fYou are in CREATIVE §7— achievements are disabled\n§7   permanently for this world.",
+            achv_warn_head: "§c§lWhat disables achievements (permanently, per world):",
+            achv_warn_list: "§7 • Turning ON Cheats (slash commands)\n§7 • Turning ON any Experiments toggle\n§7 • Switching to Creative mode\n§8This add-on never requires any of those.",
             tmTitle: "§a§lTARGET MODE",
             tm_all: "All mobs", tm_hostile: "Hostile only",
             tm_passive: "Passive only", tm_players: "Players only",
@@ -230,6 +277,20 @@ function buildRuntime(mode) {
             on: "§aเปิด", off: "§cปิด",
             soloSub: "§7โหมดเดี่ยว §8— §7ลง §dVL Core §7เพื่อรวม 2+ แอดออนเป็นระบบเดียว",
             openHint: "§7ย่อ + เข็มทิศ เพื่อเปิดตั้งค่า",
+            apiOffSub: "§c⚠ API ปิดอยู่ — โหมดวานิลลา\n§7ทุกฟีเจอร์หยุดทำงาน ปุ่มฟีเจอร์จะกลับมาเมื่อเปิด API อีกครั้ง",
+            m_api_on: "§a§l◆ API: เปิด\n§8แตะเพื่อสลับเป็นวานิลลาแท้",
+            m_api_off: "§c§l◆ API: ปิด — โหมดวานิลลา\n§8แตะเพื่อเปิดทุกฟีเจอร์กลับมา",
+            apiNowOn: "§a✔ เปิด API แล้ว §7— ฟีเจอร์ทั้งหมดกลับมาทำงาน",
+            apiNowOff: "§c✖ ปิด API แล้ว §7— โหมดวานิลลา ทุกฟีเจอร์หยุดทำงาน",
+            m_achv: "§6§l◆ Achievements\n§8สถานะความปลอดภัยของ Achievements",
+            achvTitle: "§6§lACHIEVEMENTS",
+            achv_pack: "§a✔ §fแพคนี้ประกาศเป็น Add-On สาย Achievements\n§7   (§fproduct_type: addon§7) และใช้ Stable Script API\n§7   เท่านั้น — เปิดใช้แล้ว Achievements §aยังเปิดอยู่§7\n§7   ไม่ต้องเปิด Experiments ใดๆ",
+            achv_api_on: "§e◆ §fVL API: §aเปิด §7— ฟีเจอร์ทำงานอยู่ (ยังปลอดภัยต่อ Achievements)",
+            achv_api_off: "§e◆ §fVL API: §cปิด §7— โหมดวานิลลาแท้",
+            achv_gm: "§e◆ §fโหมดเกมปัจจุบัน: §b{0}",
+            achv_gm_creative: "§c⚠ §fคุณอยู่โหมด CREATIVE §7— Achievements ถูกปิด\n§7   ถาวรสำหรับโลกนี้แล้ว",
+            achv_warn_head: "§c§lสิ่งที่ปิด Achievements (ถาวร ต่อโลก):",
+            achv_warn_list: "§7 • เปิด Cheats (ใช้คำสั่ง /)\n§7 • เปิดสวิตช์ Experiments ใดๆ\n§7 • สลับเป็นโหมด Creative\n§8แอดออนชุดนี้ไม่บังคับให้เปิดสิ่งเหล่านี้เลย",
             tmTitle: "§a§lโหมดเป้าหมาย",
             tm_all: "ทุกตัว", tm_hostile: "เฉพาะศัตรู",
             tm_passive: "เฉพาะสัตว์", tm_players: "เฉพาะผู้เล่น",
@@ -631,6 +692,7 @@ function buildRuntime(mode) {
             sweepMap(configStore);
             sweepMap(uiOpenState);
             sweepMap(waypointsCache);
+            sweepMap(vanillaViewCache);
         } catch (_) { }
     }, 600);
 
@@ -640,6 +702,7 @@ function buildRuntime(mode) {
             if (!player) return;
             if (event.initialSpawn) {
                 configStore.set(player.id, readConfig(player.id));
+                vanillaViewCache.delete(player.id);
                 grantOwner(player);
                 if (!bridge) { // โหมด bridge: Core เป็นคนทัก welcome เอง
                     system.runTimeout(() => {
@@ -660,6 +723,7 @@ function buildRuntime(mode) {
             configStore.delete(id);
             uiOpenState.delete(id);
             waypointsCache.delete(id);
+            vanillaViewCache.delete(id);
             for (const drop of _cleanups) { try { drop(id); } catch (_) { } }
         } catch (_) { }
     });
@@ -675,21 +739,60 @@ function buildRuntime(mode) {
     function openMainMenu(player) {
         try {
             if (bridge) { sendEvent("vlk:back", player.id); return; } // เมนูรวมอยู่ฝั่ง Core
-            if (_menu.length === 0) return;
             if (uiOpenState.get(player.id)) return;
             uiOpenState.set(player.id, true);
             emitSound(player, Sounds.menu, 1.5, 0.8);
+            // API ปิด = โหมดวานิลลา → ซ่อนปุ่มฟีเจอร์ เหลือปุ่มเปิดกลับ + Achievements
+            const apiOn = getRawConfig(player).apiEnabled !== false;
+            const entries = apiOn ? _menu : [];
             const f = new ActionFormData();
             f.title("§b§l« §f" + tr(player, "brand") + " §b§l»");
-            f.body(tr(player, "soloSub"));
-            for (const e of _menu) f.button(tr(player, e.label));
+            f.body(apiOn ? tr(player, "soloSub") : tr(player, "apiOffSub"));
+            for (const e of entries) f.button(tr(player, e.label));
+            f.button(tr(player, apiOn ? "m_api_on" : "m_api_off"));
+            f.button(tr(player, "m_achv"));
             f.button(tr(player, "close"));
             f.show(player).then((r) => {
                 uiOpenState.set(player.id, false);
-                if (r.canceled || r.selection === _menu.length) return;
-                try { _menu[r.selection].open(player); } catch (_) { }
+                const n = entries.length;
+                if (r.canceled || r.selection === n + 2) return;
+                if (r.selection === n) return toggleApi(player);
+                if (r.selection === n + 1) return openAchievementsForm(player);
+                try { entries[r.selection].open(player); } catch (_) { }
             }).catch(() => uiOpenState.set(player.id, false));
         } catch (_) { }
+    }
+
+    /** สวิตช์ใหญ่ ปิด/เปิด API — ปิดแล้วทุกฟีเจอร์ทุกแพคเห็น config เวอร์ชันวานิลลาทันที */
+    function toggleApi(player) {
+        const next = getRawConfig(player).apiEnabled === false;
+        setApiEnabled(player, next);
+        emitSound(player, Sounds.save, next ? 1.4 : 0.7, 0.8);
+        try { player.sendMessage(tr(player, next ? "apiNowOn" : "apiNowOff")); } catch (_) { }
+        openMainMenu(player);
+    }
+
+    function openAchievementsForm(player) {
+        emitSound(player, Sounds.click, 1.2, 0.6);
+        const apiOn = getRawConfig(player).apiEnabled !== false;
+        let gm = null;
+        try { gm = player.getGameMode(); } catch (_) { }
+        const lines = [
+            tr(player, "achv_pack"),
+            "",
+            tr(player, apiOn ? "achv_api_on" : "achv_api_off")
+        ];
+        if (gm === GameMode.creative) lines.push(tr(player, "achv_gm_creative"));
+        else if (gm) lines.push(tr(player, "achv_gm", String(gm)));
+        lines.push("", tr(player, "achv_warn_head"), tr(player, "achv_warn_list"));
+        const f = new ActionFormData();
+        f.title(tr(player, "achvTitle"));
+        f.body(lines.join("\n"));
+        f.button(tr(player, "back"));
+        f.show(player).then((r) => {
+            if (r.canceled) return; // Esc/X = ปิดจริง ไม่เด้งกลับ
+            openMainMenu(player);
+        }).catch(() => { });
     }
 
     function openTargetModePicker(player, onBack) {
@@ -735,6 +838,8 @@ function buildRuntime(mode) {
             if (!isModOwner(player)) return;
             if (item.typeId === "minecraft:compass" && player.isSneaking) {
                 system.run(() => {
+                    // API ปิดอยู่ → เข้าเมนูเสมอ (มีปุ่มเปิด API กลับ)
+                    if (getRawConfig(player).apiEnabled === false) { openMainMenu(player); return; }
                     // ฟีเจอร์เดียว: เปิดฟอร์มตรงๆ (ทางลัดเฉพาะตอนกดเปิดเอง ไม่ใช่ตอน back)
                     if (_menu.length === 1) { try { _menu[0].open(player); } catch (_) { } }
                     else openMainMenu(player);
@@ -750,7 +855,10 @@ function buildRuntime(mode) {
             if (ev.id === "vlk:cfgsync") {
                 // มีแพคไหนเซฟ config → reload cache กันค่าทับกันข้ามแพค
                 const pid = (ev.message || "").trim();
-                if (RE_PLAYER_ID.test(pid) && configStore.has(pid)) configStore.set(pid, readConfig(pid));
+                if (RE_PLAYER_ID.test(pid) && configStore.has(pid)) {
+                    configStore.set(pid, readConfig(pid));
+                    vanillaViewCache.delete(pid);
+                }
                 return;
             }
             if (bridge && ev.id === "vlk:open") {
@@ -819,7 +927,7 @@ function buildRuntime(mode) {
     /* ------------------------------ API ------------------------------ */
 
     return {
-        version: "2.1.3-" + mode,
+        version: "2.2.0-" + mode,
         solo: true,
         bridge: bridge,
         host: host,
@@ -829,7 +937,7 @@ function buildRuntime(mode) {
         sharedMap,
         start: () => { },
 
-        getConfig, persistConfig, isModOwner, grantOwner, revokeOwner,
+        getConfig, getRawConfig, setApiEnabled, persistConfig, isModOwner, grantOwner, revokeOwner,
         uiOpenState, addWaypoint, deleteWaypoint, getWaypoints, getDimensionById,
 
         Sounds, emitSound, emitParticle, vectorDistance, hasLineOfSight,
