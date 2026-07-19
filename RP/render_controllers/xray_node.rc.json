@@ -1,0 +1,34 @@
+{
+    "format_version": "1.8.0",
+    "render_controllers": {
+
+        "controller.render.vlk_xray_node.glyph": {
+            "geometry": "Geometry.default",
+            "materials": [ { "*": "Material.glyph" } ],
+            "arrays": {
+                "textures": {
+                    "Array.symbols": [
+                        "Texture.void",
+                        "Texture.coal",
+                        "Texture.copper",
+                        "Texture.iron",
+                        "Texture.gold",
+                        "Texture.redstone",
+                        "Texture.lapis",
+                        "Texture.diamond",
+                        "Texture.emerald",
+                        "Texture.netherite",
+                        "Texture.quartz",
+                        "Texture.chest",
+                        "Texture.spawner",
+                        "Texture.shulker"
+                    ]
+                }
+            },
+            "textures": [ "Array.symbols[q.property('vlk:sym')]" ],
+            "ignore_lighting": true,
+            "is_hurt_color": { "a": 0.0 },
+            "on_fire_color": { "a": 0.0 }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+# build artifacts
+*.mcaddon
+*.zip
+*.mcpack
+
+# os / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/

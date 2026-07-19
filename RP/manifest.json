@@ -1,0 +1,37 @@
+{
+    "format_version": 2,
+    "header": {
+        "name": "§d§lVector Lock §fOre Vision §7(Resources)",
+        "description": "§7See ores/chests through walls §8| §aStandalone OK §8| §dBest with Core",
+        "uuid": "917d060b-6ef1-4fab-b6f8-7fc7f0de7816",
+        "version": [
+            2,
+            1,
+            4
+        ],
+        "min_engine_version": [
+            1,
+            21,
+            70
+        ]
+    },
+    "modules": [
+        {
+            "description": "§d§lVector Lock §fOre Vision",
+            "type": "resources",
+            "uuid": "140d7a4e-2f01-40ed-b49d-acc28ca78915",
+            "version": [
+                2,
+                1,
+                4
+            ]
+        }
+    ],
+    "metadata": {
+        "authors": [
+            "p7x939"
+        ],
+        "license": "All Rights Reserved",
+        "url": "https://github.com/plu007-fix"
+    }
+}

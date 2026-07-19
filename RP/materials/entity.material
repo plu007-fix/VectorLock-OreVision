@@ -1,0 +1,11 @@
+{
+    "materials": {
+        "version": "1.0.0",
+
+        "vlk_glyph:entity_emissive_alpha": {
+            "depthFunc": "Always",
+            "-defines": ["FANCY"],
+            "+states": ["DisableCulling", "DisableDepthWrite"]
+        }
+    }
+}

@@ -1,0 +1,57 @@
+{
+    "format_version": 2,
+    "header": {
+        "name": "§d§lVector Lock §fOre Vision",
+        "description": "§7See ores/chests through walls §8| §aStandalone OK §8| §dBest with Core",
+        "uuid": "fc44f0f6-255a-4b49-925a-f03700c85a43",
+        "version": [
+            2,
+            1,
+            4
+        ],
+        "min_engine_version": [
+            1,
+            21,
+            70
+        ]
+    },
+    "modules": [
+        {
+            "description": "§d§lVector Lock §fOre Vision",
+            "type": "script",
+            "language": "javascript",
+            "uuid": "02efb965-b177-4407-ab32-63dcaec93e93",
+            "entry": "scripts/main.js",
+            "version": [
+                2,
+                1,
+                4
+            ]
+        }
+    ],
+    "dependencies": [
+        {
+            "module_name": "@minecraft/server",
+            "version": "1.18.0"
+        },
+        {
+            "module_name": "@minecraft/server-ui",
+            "version": "1.2.0"
+        },
+        {
+            "uuid": "917d060b-6ef1-4fab-b6f8-7fc7f0de7816",
+            "version": [
+                2,
+                1,
+                4
+            ]
+        }
+    ],
+    "metadata": {
+        "authors": [
+            "p7x939"
+        ],
+        "license": "All Rights Reserved",
+        "url": "https://github.com/plu007-fix"
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "format_version": "1.21.0",
+    "minecraft:entity": {
+        "description": {
+            "identifier": "vlk:xray_node",
+            "is_spawnable": true,
+            "is_summonable": true,
+            "is_experimental": false,
+            "properties": {
+                "vlk:sym": { "type": "int", "range": [0, 13], "default": 0, "client_sync": true }
+            }
+        },
+        "components": {
+            "minecraft:collision_box": { "width": 0.01, "height": 0.01 },
+            "minecraft:physics": { "has_collision": false, "has_gravity": false },
+            "minecraft:pushable": { "is_pushable": false, "is_pushable_by_piston": false },
+            "minecraft:damage_sensor": {
+                "triggers": [ { "cause": "all", "deals_damage": false } ]
+            },
+            "minecraft:environment_sensor": {
+                "triggers": [
+                    {
+                        "filters": {
+                            "test": "distance_to_nearest_player",
+                            "operator": ">=",
+                            "value": 56
+                        },
+                        "event": "vlk:dismiss"
+                    }
+                ]
+            }
+        },
+        "component_groups": {
+            "vlk:gone": {
+                "minecraft:instant_despawn": {}
+            }
+        },
+        "events": {
+            "vlk:dismiss": {
+                "add": { "component_groups": ["vlk:gone"] }
+            }
+        }
+    }
+}

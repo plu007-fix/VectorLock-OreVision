@@ -1,0 +1,40 @@
+{
+    "format_version": "1.10.0",
+    "minecraft:client_entity": {
+        "description": {
+            "identifier": "vlk:xray_node",
+            "materials": {
+                "default": "vlk_glyph",
+                "glyph": "vlk_glyph"
+            },
+            "textures": {
+                "void": "textures/vlk/void",
+                "coal": "textures/vlk/sym/coal",
+                "copper": "textures/vlk/sym/copper",
+                "iron": "textures/vlk/sym/iron",
+                "gold": "textures/vlk/sym/gold",
+                "redstone": "textures/vlk/sym/redstone",
+                "lapis": "textures/vlk/sym/lapis",
+                "diamond": "textures/vlk/sym/diamond",
+                "emerald": "textures/vlk/sym/emerald",
+                "netherite": "textures/vlk/sym/netherite",
+                "quartz": "textures/vlk/sym/quartz",
+                "chest": "textures/vlk/sym/chest",
+                "spawner": "textures/vlk/sym/spawner",
+                "shulker": "textures/vlk/sym/shulker"
+            },
+            "geometry": {
+                "default": "geometry.vlk_xray_node"
+            },
+            "animations": {
+                "field": "animation.vlk_xray_node.field"
+            },
+            "scripts": {
+                "animate": [ "field" ]
+            },
+            "render_controllers": [
+                "controller.render.vlk_xray_node.glyph"
+            ]
+        }
+    }
+}

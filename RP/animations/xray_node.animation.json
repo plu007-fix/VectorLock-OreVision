@@ -1,0 +1,18 @@
+{
+    "format_version": "1.8.0",
+    "animations": {
+        "animation.vlk_xray_node.field": {
+            "loop": true,
+            "bones": {
+                "glyph": {
+                    "rotation": [
+                        "q.rotation_to_camera(0)",
+                        "q.rotation_to_camera(1) - q.body_y_rotation",
+                        0
+                    ],
+                    "scale": "math.min(q.life_time * 6.0, 1.0)"
+                }
+            }
+        }
+    }
+}

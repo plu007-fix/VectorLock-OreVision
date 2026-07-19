@@ -1,0 +1,30 @@
+{
+    "format_version": "1.16.0",
+    "minecraft:geometry": [
+        {
+            "description": {
+                "identifier": "geometry.vlk_xray_node",
+                "texture_width": 16,
+                "texture_height": 16,
+                "visible_bounds_width": 6,
+                "visible_bounds_height": 6,
+                "visible_bounds_offset": [0, 0, 0]
+            },
+            "bones": [
+                {
+                    "name": "glyph",
+                    "pivot": [0, 0, 0],
+                    "cubes": [
+                        {
+                            "origin": [-8, -8, 0],
+                            "size": [16, 16, 0],
+                            "uv": {
+                                "north": { "uv": [0, 0], "uv_size": [16, 16] }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
